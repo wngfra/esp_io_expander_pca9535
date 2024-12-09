@@ -18,7 +18,7 @@
 #define I2C_MASTER_SCL_IO   6          /*!< gpio number for I2C master clock */
 #define I2C_MASTER_SDA_IO   5          /*!< gpio number for I2C master data  */
 #define I2C_MASTER_NUM      I2C_NUM_0   /*!< I2C port number for master dev */
-#define I2C_ADDRESS         ESP_IO_EXPANDER_I2C_PCA9535_ADDRESS_00
+#define I2C_ADDRESS         ESP_IO_EXPANDER_I2C_PCA9535_ADDRESS_000
 /*!< I2C address of slave dev */
 
 #define TEST_LOOP_CNT       10
@@ -121,6 +121,6 @@ void tearDown(void)
 
 void app_main(void)
 {
-    prinf("PCA9535(C)\n");
+    printf("PCA9535(C)\n");
     unity_run_menu();
 }
