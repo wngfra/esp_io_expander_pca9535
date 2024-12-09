@@ -57,3 +57,4 @@ sdkconfig
 build/
 managed_components/
 *.old
+dist/
