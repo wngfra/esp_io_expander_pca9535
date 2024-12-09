@@ -30,7 +30,7 @@ esp_err_t esp_io_expander_new_i2c_pca9535(i2c_master_bus_handle_t i2c_bus, uint3
 /**
  * @brief I2C address of the PCA9535
  *
- * The 8-bit address format for the TCA9539 is as follows:
+ * The 8-bit address format for the PCA9535 is as follows:
  *
  *                (Slave Address)
  *     ┌─────────────────┷─────────────────┐
@@ -44,7 +44,7 @@ esp_err_t esp_io_expander_new_i2c_pca9535(i2c_master_bus_handle_t i2c_bus, uint3
  * For example, if a PCA9535 chip's A0,A1,A2 are connected to GND, it's 7-bit slave address is 0b0100000.
  * Then users can use `ESP_IO_EXPANDER_I2C_PCA9535_ADDRESS_000` to init it.
  */
-enum esp_io_expander_tca_95xx_16bit_address {
+enum esp_io_expander_pca_9535_address {
     ESP_IO_EXPANDER_I2C_PCA9535_ADDRESS_000 = 0b0100000,
     ESP_IO_EXPANDER_I2C_PCA9535_ADDRESS_001 = 0b0100001,
     ESP_IO_EXPANDER_I2C_PCA9535_ADDRESS_010 = 0b0100010,

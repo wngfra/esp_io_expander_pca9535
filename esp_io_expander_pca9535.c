@@ -57,8 +57,8 @@ esp_err_t esp_io_expander_new_i2c_pca9535(i2c_master_bus_handle_t i2c_bus, uint3
     ESP_RETURN_ON_FALSE(handle_ret != NULL, ESP_ERR_INVALID_ARG, TAG, "Invalid handle_ret");
 
     // Allocate memory for driver object
-    esp_io_expander_pca9535_t *tca = (esp_io_expander_pca9535_t *)calloc(1, sizeof(esp_io_expander_pca9535_t));
-    ESP_RETURN_ON_FALSE(tca, ESP_ERR_NO_MEM, TAG, "Malloc failed");
+    esp_io_expander_pca9535_t *pca = (esp_io_expander_pca9535_t *)calloc(1, sizeof(esp_io_expander_pca9535_t));
+    ESP_RETURN_ON_FALSE(pca, ESP_ERR_NO_MEM, TAG, "Malloc failed");
 
     // Add new I2C device
     esp_err_t ret = ESP_OK;
@@ -66,73 +66,73 @@ esp_err_t esp_io_expander_new_i2c_pca9535(i2c_master_bus_handle_t i2c_bus, uint3
         .device_address = dev_addr,
         .scl_speed_hz = I2C_CLK_SPEED,
     };
-    ESP_GOTO_ON_ERROR(i2c_master_bus_add_device(i2c_bus, &i2c_dev_cfg, &tca->i2c_handle), err, TAG, "Add new I2C device failed");
+    ESP_GOTO_ON_ERROR(i2c_master_bus_add_device(i2c_bus, &i2c_dev_cfg, &pca->i2c_handle), err, TAG, "Add new I2C device failed");
 
-    tca->base.config.io_count = IO_COUNT;
-    tca->base.config.flags.dir_out_bit_zero = 1;
-    tca->base.read_input_reg = read_input_reg;
-    tca->base.write_output_reg = write_output_reg;
-    tca->base.read_output_reg = read_output_reg;
-    tca->base.write_direction_reg = write_direction_reg;
-    tca->base.read_direction_reg = read_direction_reg;
-    tca->base.del = del;
-    tca->base.reset = reset;
+    pca->base.config.io_count = IO_COUNT;
+    pca->base.config.flags.dir_out_bit_zero = 1;
+    pca->base.read_input_reg = read_input_reg;
+    pca->base.write_output_reg = write_output_reg;
+    pca->base.read_output_reg = read_output_reg;
+    pca->base.write_direction_reg = write_direction_reg;
+    pca->base.read_direction_reg = read_direction_reg;
+    pca->base.del = del;
+    pca->base.reset = reset;
 
     /* Reset configuration and register status */
-    ESP_GOTO_ON_ERROR(reset(&tca->base), err, TAG, "Reset failed");
+    ESP_GOTO_ON_ERROR(reset(&pca->base), err, TAG, "Reset failed");
 
-    *handle_ret = &tca->base;
+    *handle_ret = &pca->base;
     return ESP_OK;
 err:
-    free(tca);
+    free(pca);
     return ret;
 }
 
 static esp_err_t read_input_reg(esp_io_expander_handle_t handle, uint32_t *value)
 {
-    esp_io_expander_pca9535_t *tca = (esp_io_expander_pca9535_t *)__containerof(handle, esp_io_expander_pca9535_t, base);
+    esp_io_expander_pca9535_t *pca = (esp_io_expander_pca9535_t *)__containerof(handle, esp_io_expander_pca9535_t, base);
 
     uint8_t temp[2] = {0, 0};
-    ESP_RETURN_ON_ERROR(i2c_master_transmit_receive(tca->i2c_handle, (uint8_t[]){INPUT_REG_ADDR}, 1, temp, sizeof(temp), I2C_TIMEOUT_MS), TAG, "Read input reg failed");
+    ESP_RETURN_ON_ERROR(i2c_master_transmit_receive(pca->i2c_handle, (uint8_t[]){INPUT_REG_ADDR}, 1, temp, sizeof(temp), I2C_TIMEOUT_MS), TAG, "Read input reg failed");
     *value = (((uint32_t)temp[1]) << 8) | (temp[0]);
     return ESP_OK;
 }
 
 static esp_err_t write_output_reg(esp_io_expander_handle_t handle, uint32_t value)
 {
-    esp_io_expander_pca9535_t *tca = (esp_io_expander_pca9535_t *)__containerof(handle, esp_io_expander_pca9535_t, base);
+    esp_io_expander_pca9535_t *pca = (esp_io_expander_pca9535_t *)__containerof(handle, esp_io_expander_pca9535_t, base);
     value &= 0xffff;
 
     uint8_t data[] = {OUTPUT_REG_ADDR, value & 0xff, value >> 8};
-    ESP_RETURN_ON_ERROR(i2c_master_transmit(tca->i2c_handle, data, sizeof(data), I2C_TIMEOUT_MS), TAG, "Write output reg failed");
-    tca->regs.output = value;
+    ESP_RETURN_ON_ERROR(i2c_master_transmit(pca->i2c_handle, data, sizeof(data), I2C_TIMEOUT_MS), TAG, "Write output reg failed");
+    pca->regs.output = value;
     return ESP_OK;
 }
 
 static esp_err_t read_output_reg(esp_io_expander_handle_t handle, uint32_t *value)
 {
-    esp_io_expander_pca9535_t *tca = (esp_io_expander_pca9535_t *)__containerof(handle, esp_io_expander_pca9535_t, base);
+    esp_io_expander_pca9535_t *pca = (esp_io_expander_pca9535_t *)__containerof(handle, esp_io_expander_pca9535_t, base);
 
-    *value = tca->regs.output;
+    *value = pca->regs.output;
     return ESP_OK;
 }
 
 static esp_err_t write_direction_reg(esp_io_expander_handle_t handle, uint32_t value)
 {
-    esp_io_expander_pca9535_t *tca = (esp_io_expander_pca9535_t *)__containerof(handle, esp_io_expander_pca9535_t, base);
+    esp_io_expander_pca9535_t *pca = (esp_io_expander_pca9535_t *)__containerof(handle, esp_io_expander_pca9535_t, base);
     value &= 0xffff;
 
     uint8_t data[] = {DIRECTION_REG_ADDR, value & 0xff, value >> 8};
-    ESP_RETURN_ON_ERROR(i2c_master_transmit(tca->i2c_handle, data, sizeof(data), I2C_TIMEOUT_MS), TAG, "Write direction reg failed");
-    tca->regs.direction = value;
+    ESP_RETURN_ON_ERROR(i2c_master_transmit(pca->i2c_handle, data, sizeof(data), I2C_TIMEOUT_MS), TAG, "Write direction reg failed");
+    pca->regs.direction = value;
     return ESP_OK;
 }
 
 static esp_err_t read_direction_reg(esp_io_expander_handle_t handle, uint32_t *value)
 {
-    esp_io_expander_pca9535_t *tca = (esp_io_expander_pca9535_t *)__containerof(handle, esp_io_expander_pca9535_t, base);
+    esp_io_expander_pca9535_t *pca = (esp_io_expander_pca9535_t *)__containerof(handle, esp_io_expander_pca9535_t, base);
 
-    *value = tca->regs.direction;
+    *value = pca->regs.direction;
     return ESP_OK;
 }
 
@@ -145,9 +145,9 @@ static esp_err_t reset(esp_io_expander_t *handle)
 
 static esp_err_t del(esp_io_expander_t *handle)
 {
-    esp_io_expander_pca9535_t *tca = (esp_io_expander_pca9535_t *)__containerof(handle, esp_io_expander_pca9535_t, base);
+    esp_io_expander_pca9535_t *pca = (esp_io_expander_pca9535_t *)__containerof(handle, esp_io_expander_pca9535_t, base);
 
-    ESP_RETURN_ON_ERROR(i2c_master_bus_rm_device(tca->i2c_handle), TAG, "Remove I2C device failed");
-    free(tca);
+    ESP_RETURN_ON_ERROR(i2c_master_bus_rm_device(pca->i2c_handle), TAG, "Remove I2C device failed");
+    free(pca);
     return ESP_OK;
 }

@@ -1,6 +1,6 @@
 # ESP IO Expander Chip PCA9535(C)
 
-Implementation of the TCA9554 io expander chip with esp_io_expander component.
+Implementation of the PCA9535(C) io expander chip with esp_io_expander component.
 
 | Chip             | Communication interface | Component name | Link to datasheet |
 | :--------------: | :---------------------: | :------------: | :---------------: |
@@ -24,8 +24,8 @@ Creation of the i2c bus.
     i2c_master_bus_handle_t i2c_handle = NULL;
     const i2c_master_bus_config_t bus_config = {
         .i2c_port = I2C_NUM_0,
-        .sda_io_num = 47,
-        .scl_io_num = 48,
+        .sda_io_num = 6,
+        .scl_io_num = 5,
         .clk_source = I2C_CLK_SRC_DEFAULT,
     };
     i2c_new_master_bus(&bus_config, &i2c_handle);
