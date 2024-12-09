@@ -1,5 +1,5 @@
 ## IDF Component Manager Manifest File
-version: 1.0.0
+version: 1.0.1
 description: ESP IO Expander - pca9535(c)
 url: https://github.com/wngfra/esp_io_expander_pca9535
 dependencies:
