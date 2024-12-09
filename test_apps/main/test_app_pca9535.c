@@ -121,6 +121,8 @@ void tearDown(void)
 
 void app_main(void)
 {
-    printf("PCA9535(C)\n");
-    unity_run_menu();
+    printf("PCA9535(C) testing...\n");
+    UNITY_BEGIN();
+    unity_run_all_tests();
+    UNITY_END();
 }
